@@ -111,23 +111,31 @@
       <!-- OWNER LOGIN -->
       <section id="login" class="hidden">
 
-        <h1>OWNER LOGIN</h1>
+  <h1>OWNER LOGIN</h1>
 
-        <p>Only the owner can edit the notes.</p>
+  <p>Only the owner can edit the notes.</p>
 
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-        >
+  <input
+    type="email"
+    id="email"
+    placeholder="Email"
+  >
 
-        <br>
+  <br><br>
 
-        <button class="enter-button" onclick="checkPassword()">
-          LOGIN
-        </button>
+  <input
+    type="password"
+    id="password"
+    placeholder="Password"
+  >
 
-        <p id="login-message"></p>
+  <br>
+
+  <button class="enter-button" onclick="checkPassword()">
+    LOGIN
+  </button>
+
+  <p id="login-message"></p>
 
       </section>
 
@@ -156,7 +164,7 @@
   </div>
 
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 
 </body>
 
