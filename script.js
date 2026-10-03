@@ -48,7 +48,7 @@ const db = getFirestore(app);
 // SHOW / HIDE PAGES
 // ============================
 
-function showPage(pageName) {
+window.showPage = function(pageName) {
 
   const pages = [
     "welcome",
