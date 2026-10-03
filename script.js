@@ -369,6 +369,52 @@ window.deleteNote = async function(id) {
 
 };
 
+// ==========================
+// CREATE NEW NOTE
+// ==========================
+
+window.createNote = async function() {
+
+  if (!auth.currentUser) {
+    return;
+  }
+
+
+  const text =
+    prompt("Write your new diary entry:");
+
+
+  if (text === null || text.trim() === "") {
+    return;
+  }
+
+
+  try {
+
+    await addDoc(
+      collection(db, "notes"),
+      {
+        title: "Owner's Note",
+        text: text.trim(),
+        createdAt: new Date()
+      }
+    );
+
+
+    loadNotes();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Something went wrong while saving your note."
+    );
+
+  }
+
+};
 
 // ==========================
 // ADD ANONYMOUS ENTRY
