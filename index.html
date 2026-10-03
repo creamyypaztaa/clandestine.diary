@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style.css">
+  <title>The Clandestine Diary</title>
+</head>
+
+<body>
+
+  <div class="page">
+
+    <div class="sidebar">
+
+      <button class="side-button" onclick="showNotes()">
+        Owner's Notes
+      </button>
+
+      <button class="side-button" onclick="showAdd()">
+        Add Yours
+      </button>
+
+    </div>
+
+    <main class="content">
+
+      <section id="welcome">
+        <h1>WELCOME TO THE CLANDESTINE DIARY</h1>
+        <p>
+          A little place for thoughts, stories, feelings, and words.
+        </p>
+        <p>
+          Read mine, or leave something of your own.
+          You don't need to tell us who you are.
+        </p>
+
+        <button class="enter-button" onclick="showNotes()">
+          ENTER
+        </button>
+      </section>
+
+      <section id="notes" class="hidden">
+        <h1>OWNER'S NOTES</h1>
+
+        <div class="note">
+          <p>Something written here will become one of my diary entries.</p>
+        </div>
+
+      </section>
+
+      <section id="add" class="hidden">
+        <h1>ADD YOURS</h1>
+
+        <p>Leave something behind anonymously.</p>
+
+        <textarea id="entry" placeholder="Write something..."></textarea>
+
+        <button class="enter-button" onclick="addEntry()">
+          LEAVE IT
+        </button>
+
+        <div id="entries"></div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+
+  </html>
