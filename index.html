@@ -3,71 +3,161 @@
 
 <head>
   <link rel="stylesheet" href="style.css">
-  <title>The Clandestine Diary</title>
+  <title>Clandestine Diary</title>
 </head>
 
 <body>
 
   <div class="page">
 
-    <div class="sidebar">
+    <!-- LEFT SIDE -->
+    <aside class="sidebar">
 
-      <button class="side-button" onclick="showNotes()">
+      <button class="side-button" onclick="showPage('welcome')">
+        Home
+      </button>
+
+      <button class="side-button" onclick="showPage('notes')">
         Owner's Notes
       </button>
 
-      <button class="side-button" onclick="showAdd()">
+      <button class="side-button" onclick="showPage('add')">
         Add Yours
       </button>
 
-    </div>
+      <button class="side-button owner-button" onclick="ownerLogin()">
+        Owner
+      </button>
 
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
     <main class="content">
 
+      <!-- WELCOME -->
       <section id="welcome">
-        <h1>WELCOME TO THE CLANDESTINE DIARY</h1>
+
+        <h1>WELCOME TO   THE CLANDESTINE DIARY</h1>
+
         <p>
           A little place for thoughts, stories, feelings, and words.
         </p>
+
         <p>
           Read mine, or leave something of your own.
           You don't need to tell us who you are.
         </p>
 
-        <button class="enter-button" onclick="showNotes()">
-          ENTER
-        </button>
       </section>
 
+
+      <!-- OWNER'S NOTES -->
       <section id="notes" class="hidden">
+
         <h1>OWNER'S NOTES</h1>
 
-        <div class="note">
-          <p>Something written here will become one of my diary entries.</p>
+        <div id="notes-content">
+
+          <article class="note">
+            <h2>October 3, 2026</h2>
+
+            <p>
+              This is where my diary entry will appear.
+            </p>
+          </article>
+
+        </div>
+
+        <!-- ONLY OWNER SEES THIS -->
+        <div id="owner-controls" class="hidden">
+
+          <button class="enter-button" onclick="editNotes()">
+            EDIT
+          </button>
+
+          <button class="enter-button delete-button" onclick="deleteNotes()">
+            DELETE
+          </button>
+
         </div>
 
       </section>
 
+
+      <!-- ADD YOURS -->
       <section id="add" class="hidden">
+
         <h1>ADD YOURS</h1>
 
-        <p>Leave something behind anonymously.</p>
+        <p>
+          Leave something behind anonymously.
+        </p>
 
-        <textarea id="entry" placeholder="Write something..."></textarea>
+        <textarea
+          id="entry"
+          placeholder="Write something..."
+        ></textarea>
 
         <button class="enter-button" onclick="addEntry()">
           LEAVE IT
         </button>
 
         <div id="entries"></div>
+
+      </section>
+
+
+      <!-- OWNER LOGIN -->
+      <section id="login" class="hidden">
+
+        <h1>OWNER LOGIN</h1>
+
+        <p>Only the owner can edit the notes.</p>
+
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+        >
+
+        <br>
+
+        <button class="enter-button" onclick="checkPassword()">
+          LOGIN
+        </button>
+
+        <p id="login-message"></p>
+
+      </section>
+
+
+      <!-- OWNER DASHBOARD -->
+      <section id="dashboard" class="hidden">
+
+        <h1>OWNER DASHBOARD</h1>
+
+        <p>
+          You are logged in as the owner.
+        </p>
+
+        <button class="enter-button" onclick="showPage('notes')">
+          VIEW NOTES
+        </button>
+
+        <button class="enter-button" onclick="logout()">
+          LOG OUT
+        </button>
+
       </section>
 
     </main>
 
   </div>
 
+
   <script src="script.js"></script>
 
 </body>
 
-  </html>
+</html>
