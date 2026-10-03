@@ -1,39 +1,98 @@
-// Change this later.
-// This is ONLY a temporary demo password.
-const OWNER_PASSWORD = "Fatigue";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
-let isOwner = false;
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  setDoc,
+  deleteDoc,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 
-// SHOW A PAGE
+// ============================
+// FIREBASE CONFIG
+// ============================
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCbTAU50HyhJp7gObZ2KEaqtV4pRTpqhDM",
+  authDomain: "clandestinediary.firebaseapp.com",
+  projectId: "clandestinediary",
+  storageBucket: "clandestinediary.firebasestorage.app",
+  messagingSenderId: "709540928458",
+  appId: "1:709540928458:web:20236dc213ac9235dacd33"
+};
+
+
+// ============================
+// INITIALIZE FIREBASE
+// ============================
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+// ============================
+// SHOW / HIDE PAGES
+// ============================
+
 function showPage(pageName) {
 
-  document.getElementById("welcome").classList.add("hidden");
-  document.getElementById("notes").classList.add("hidden");
-  document.getElementById("add").classList.add("hidden");
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("dashboard").classList.add("hidden");
+  const pages = [
+    "welcome",
+    "notes",
+    "add",
+    "login",
+    "dashboard"
+  ];
 
-  document.getElementById(pageName).classList.remove("hidden");
+  pages.forEach(function(page) {
+    document.getElementById(page).classList.add("hidden");
+  });
+
+  document
+    .getElementById(pageName)
+    .classList.remove("hidden");
 
   updateOwnerControls();
 }
 
 
+// ============================
 // OWNER LOGIN
-function ownerLogin() {
+// ============================
 
-  if (isOwner) {
+window.ownerLogin = function() {
+
+  if (auth.currentUser) {
     showPage("dashboard");
     return;
   }
 
   showPage("login");
-}
+};
 
 
-// CHECK PASSWORD
-function checkPassword() {
+// ============================
+// CHECK LOGIN
+// ============================
+
+window.checkPassword = async function() {
+
+  const email =
+    document.getElementById("email").value.trim();
 
   const password =
     document.getElementById("password").value;
@@ -42,32 +101,66 @@ function checkPassword() {
     document.getElementById("login-message");
 
 
-  if (password === OWNER_PASSWORD) {
+  try {
 
-    isOwner = true;
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
     message.textContent = "";
 
+    document.getElementById("email").value = "";
     document.getElementById("password").value = "";
 
     showPage("dashboard");
 
-  } else {
+    updateOwnerControls();
+
+    loadNotes();
+
+    loadSubmissions();
+
+  } catch (error) {
+
+    console.log(error);
 
     message.textContent =
-      "Wrong password.";
+      "Incorrect email or password.";
 
   }
-}
+};
 
 
-// SHOW/HIDE OWNER CONTROLS
+// ============================
+// LOG OUT
+// ============================
+
+window.logout = async function() {
+
+  await signOut(auth);
+
+  updateOwnerControls();
+
+  showPage("welcome");
+};
+
+
+// ============================
+// OWNER CONTROLS
+// ============================
+
 function updateOwnerControls() {
 
   const controls =
     document.getElementById("owner-controls");
 
-  if (isOwner) {
+  if (!controls) {
+    return;
+  }
+
+  if (auth.currentUser) {
 
     controls.classList.remove("hidden");
 
@@ -79,90 +172,266 @@ function updateOwnerControls() {
 }
 
 
-// EDIT NOTES
-function editNotes() {
+// ============================
+// LOAD OWNER'S NOTES
+// ============================
 
-  if (!isOwner) {
+async function loadNotes() {
+
+  const notesContainer =
+    document.getElementById("notes-content");
+
+  notesContainer.innerHTML = "";
+
+  const notesSnapshot =
+    await getDocs(collection(db, "notes"));
+
+
+  notesSnapshot.forEach(function(noteDocument) {
+
+    const note =
+      noteDocument.data();
+
+    const article =
+      document.createElement("article");
+
+    article.className = "note";
+
+
+    const title =
+      document.createElement("h2");
+
+    title.textContent =
+      note.title || "Owner's Note";
+
+
+    const paragraph =
+      document.createElement("p");
+
+    paragraph.textContent =
+      note.text;
+
+
+    article.appendChild(title);
+    article.appendChild(paragraph);
+
+
+    if (auth.currentUser) {
+
+      const editButton =
+        document.createElement("button");
+
+      editButton.className =
+        "enter-button";
+
+      editButton.textContent =
+        "EDIT";
+
+
+      editButton.onclick =
+        function() {
+
+          editNote(
+            noteDocument.id,
+            note.text
+          );
+
+        };
+
+
+      const deleteButton =
+        document.createElement("button");
+
+      deleteButton.className =
+        "enter-button delete-button";
+
+      deleteButton.textContent =
+        "DELETE";
+
+
+      deleteButton.onclick =
+        function() {
+
+          deleteNote(
+            noteDocument.id
+          );
+
+        };
+
+
+      article.appendChild(editButton);
+      article.appendChild(deleteButton);
+    }
+
+
+    notesContainer.appendChild(article);
+
+  });
+}
+
+
+// ============================
+// CREATE / EDIT NOTE
+// ============================
+
+window.editNote = async function(id, oldText) {
+
+  if (!auth.currentUser) {
     return;
   }
 
   const newText =
-    prompt("Edit your diary entry:");
+    prompt(
+      "Edit your diary entry:",
+      oldText
+    );
+
 
   if (newText === null) {
     return;
   }
 
-  const note =
-    document.querySelector("#notes-content .note p");
 
-  note.textContent = newText;
-}
+  await setDoc(
+    doc(db, "notes", id),
+    {
+      title: "Owner's Note",
+      text: newText
+    }
+  );
 
 
-// DELETE NOTES
-function deleteNotes() {
+  loadNotes();
+};
 
-  if (!isOwner) {
+
+// ============================
+// DELETE NOTE
+// ============================
+
+window.deleteNote = async function(id) {
+
+  if (!auth.currentUser) {
     return;
   }
 
-  const confirmDelete =
-    confirm("Delete this diary entry?");
 
-  if (!confirmDelete) {
+  const confirmed =
+    confirm(
+      "Delete this diary entry?"
+    );
+
+
+  if (!confirmed) {
     return;
   }
 
-  document.getElementById("notes-content").innerHTML = "";
-}
+
+  await deleteDoc(
+    doc(db, "notes", id)
+  );
 
 
-// LOG OUT
-function logout() {
-
-  isOwner = false;
-
-  updateOwnerControls();
-
-  showPage("welcome");
-}
+  loadNotes();
+};
 
 
-// ADD ANONYMOUS ENTRY
-function addEntry() {
+// ============================
+// ADD ANONYMOUS SUBMISSION
+// ============================
+
+window.addEntry = async function() {
+
+  const textarea =
+    document.getElementById("entry");
 
   const text =
-    document.getElementById("entry").value.trim();
+    textarea.value.trim();
+
 
   if (text === "") {
     return;
   }
 
 
-  const newEntry =
-    document.createElement("div");
-
-  newEntry.className = "note";
-
-
-  const paragraph =
-    document.createElement("p");
-
-  paragraph.textContent = text;
+  await addDoc(
+    collection(db, "submissions"),
+    {
+      text: text,
+      createdAt: new Date()
+    }
+  );
 
 
-  newEntry.appendChild(paragraph);
+  textarea.value = "";
+
+  alert(
+    "Your anonymous entry has been added."
+  );
 
 
-  document
-    .getElementById("entries")
-    .prepend(newEntry);
+  if (auth.currentUser) {
+    loadSubmissions();
+  }
+};
 
 
-  document.getElementById("entry").value = "";
+// ============================
+// LOAD SUBMISSIONS
+// ============================
+
+async function loadSubmissions() {
+
+  if (!auth.currentUser) {
+    return;
+  }
+
+
+  const container =
+    document.getElementById("entries");
+
+  container.innerHTML = "";
+
+
+  const submissions =
+    await getDocs(
+      collection(db, "submissions")
+    );
+
+
+  submissions.forEach(
+    function(submissionDocument) {
+
+      const submission =
+        submissionDocument.data();
+
+
+      const entry =
+        document.createElement("div");
+
+      entry.className = "note";
+
+
+      const paragraph =
+        document.createElement("p");
+
+      paragraph.textContent =
+        submission.text;
+
+
+      entry.appendChild(paragraph);
+
+      container.appendChild(entry);
+
+    }
+  );
 }
 
 
-// START ON HOME
+// ============================
+// START WEBSITE
+// ============================
+
 showPage("welcome");
+
+loadNotes();
