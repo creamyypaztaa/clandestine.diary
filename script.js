@@ -123,13 +123,11 @@ window.checkPassword = async function() {
     window.showPage("dashboard");
 
   } catch (error) {
+  console.error(error);
 
-    console.error(error);
-
-    message.textContent =
-      "Login failed. Check your email and password.";
-
-  }
+  message.textContent =
+    error.code + ": " + error.message;
+}
 
 };
 
