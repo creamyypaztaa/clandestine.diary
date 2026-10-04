@@ -631,34 +631,89 @@ async function loadSubmissions() {
 
     submissions.forEach(function(submission) {
 
-      const article =
-        document.createElement("article");
+  const article = document.createElement("article");
+  article.className = "note collapsed";
 
-      article.className =
-        "note collapsed";
+  const header = document.createElement("div");
+  header.className = "note-header";
+
+  const title = document.createElement("h2");
+
+  const date = submission.createdAt?.toDate
+    ? submission.createdAt.toDate()
+    : new Date(submission.createdAt);
+
+  title.textContent = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+
+  const text = document.createElement("p");
+  text.className = "note-preview";
+
+  text.textContent =
+    submission.text.length > 45
+      ? submission.text.substring(0, 45) + "..."
+      : submission.text;
+
+  header.appendChild(title);
+  header.appendChild(text);
+
+  article.appendChild(header);
 
 
-      const header =
-        document.createElement("div");
+  header.onclick = function() {
 
-      header.className =
-        "note-header";
+    if (article.classList.contains("collapsed")) {
+
+      article.classList.remove("collapsed");
+
+      text.textContent = submission.text;
+
+    } else {
+
+      article.classList.add("collapsed");
+
+      text.textContent =
+        submission.text.length > 45
+          ? submission.text.substring(0, 45) + "..."
+          : submission.text;
+
+    }
+
+  };
 
 
-      const title =
-        document.createElement("h2");
+  // OWNER DELETE BUTTON
 
-      const date =
-        submission.createdAt?.toDate
-          ? submission.createdAt.toDate()
-          : new Date(submission.createdAt);
+  if (auth.currentUser) {
 
-      title.textContent =
-        date.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric"
-        });
+    const deleteButton = document.createElement("button");
+
+    deleteButton.className =
+      "enter-button delete-button";
+
+    deleteButton.textContent = "DELETE";
+
+    deleteButton.onclick = function(event) {
+
+      event.stopPropagation();
+
+      window.deleteSubmission(
+        submission.id
+      );
+
+    };
+
+    article.appendChild(deleteButton);
+
+  }
+
+
+  container.appendChild(article);
+
+});
 
 
       const preview =
