@@ -351,108 +351,7 @@ async function loadNotes() {
 }
 
 
-  container.innerHTML = "";
-
-
-  try {
-
-    const snapshot =
-      await getDocs(
-        collection(db, "notes")
-      );
-
-
-    snapshot.forEach(function(noteDocument) {
-
-      const note =
-        noteDocument.data();
-
-
-      const article =
-        document.createElement("article");
-
-      article.className = "note";
-
-
-      const title =
-        document.createElement("h2");
-
-      title.textContent =
-        note.title || "Owner's Note";
-
-
-      const paragraph =
-        document.createElement("p");
-
-      paragraph.textContent =
-        note.text;
-
-
-      article.appendChild(title);
-      article.appendChild(paragraph);
-
-
-      if (auth.currentUser) {
-
-        const editButton =
-          document.createElement("button");
-
-        editButton.className =
-          "enter-button";
-
-        editButton.textContent =
-          "EDIT";
-
-
-        editButton.onclick = function() {
-
-          window.editNote(
-            noteDocument.id,
-            note.text
-          );
-
-        };
-
-
-        const deleteButton =
-          document.createElement("button");
-
-        deleteButton.className =
-          "enter-button delete-button";
-
-        deleteButton.textContent =
-          "DELETE";
-
-
-        deleteButton.onclick = function() {
-
-          window.deleteNote(
-            noteDocument.id
-          );
-
-        };
-
-
-        article.appendChild(editButton);
-        article.appendChild(deleteButton);
-
-      }
-
-
-      container.appendChild(article);
-
-    });
-
-
-  } catch (error) {
-
-    console.error(error);
-
-  }
-
-}
-
-
+  
 // ==========================
 // EDIT NOTE
 // ==========================
@@ -488,7 +387,6 @@ window.editNote = async function(id, oldText) {
   loadNotes();
 
 };
-
 
 // ==========================
 // DELETE NOTE
