@@ -69,7 +69,7 @@ window.showPage = function(pageName) {
   }
 
   if (pageName === "add") {
-  loadSubmissions();
+    loadSubmissions();
   }
 
 };
@@ -145,6 +145,7 @@ window.logout = async function() {
     await signOut(auth);
 
     updateOwnerControls();
+
     window.showPage("welcome");
 
   } catch (error) {
@@ -170,9 +171,13 @@ function updateOwnerControls() {
   }
 
   if (auth.currentUser) {
+
     controls.classList.remove("hidden");
+
   } else {
+
     controls.classList.add("hidden");
+
   }
 
 }
@@ -196,22 +201,25 @@ async function loadNotes() {
   try {
 
     const snapshot =
-      await getDocs(collection(db, "notes"));
+      await getDocs(
+        collection(db, "notes")
+      );
 
     const notes = [];
 
     snapshot.forEach(function(noteDocument) {
 
-      const note = noteDocument.data();
+      const note =
+        noteDocument.data();
 
       notes.push({
         id: noteDocument.id,
-        title: note.title || "Owner's Note",
         text: note.text || "",
         createdAt: note.createdAt
       });
 
     });
+
 
     notes.sort(function(a, b) {
 
@@ -249,10 +257,12 @@ async function loadNotes() {
       const title =
         document.createElement("h2");
 
+
       const date =
         note.createdAt?.toDate
           ? note.createdAt.toDate()
           : new Date(note.createdAt);
+
 
       title.textContent =
         date.toLocaleDateString("en-US", {
@@ -262,62 +272,65 @@ async function loadNotes() {
         });
 
 
-      const preview =
+      const text =
         document.createElement("p");
 
-      preview.className =
+      text.className =
         "note-preview";
 
-      preview.textContent =
+
+      text.textContent =
         note.text.length > 45
           ? note.text.substring(0, 45) + "..."
           : note.text;
 
 
       header.appendChild(title);
-      header.appendChild(preview);
+      header.appendChild(text);
+
+      article.appendChild(header);
 
 
-      const fullContent =
-        document.createElement("div");
+      header.onclick =
+        function() {
 
-      fullContent.className =
-        "note-full";
+          if (
+            article.classList.contains("collapsed")
+          ) {
 
+            article.classList.remove(
+              "collapsed"
+            );
 
-      const paragraph =
-        document.createElement("p");
+            text.textContent =
+              note.text;
 
-      paragraph.textContent =
-        note.text;
+          } else {
 
-      fullContent.appendChild(paragraph);
+            article.classList.add(
+              "collapsed"
+            );
 
+            text.textContent =
+              note.text.length > 45
+                ? note.text.substring(0, 45) + "..."
+                : note.text;
 
-      const minimizeButton =
-        document.createElement("button");
-
-      minimizeButton.className =
-        "enter-button minimize-button";
-
-      minimizeButton.textContent =
-        "MINIMIZE";
-
-      minimizeButton.onclick =
-        function(event) {
-
-          event.stopPropagation();
-
-          article.classList.add("collapsed");
+          }
 
         };
 
-      fullContent.appendChild(
-        minimizeButton
-      );
 
+      // OWNER CONTROLS
 
       if (auth.currentUser) {
+
+        const controls =
+          document.createElement("div");
+
+        controls.className =
+          "note-controls";
+
 
         const editButton =
           document.createElement("button");
@@ -327,6 +340,7 @@ async function loadNotes() {
 
         editButton.textContent =
           "EDIT";
+
 
         editButton.onclick =
           function(event) {
@@ -350,35 +364,37 @@ async function loadNotes() {
         deleteButton.textContent =
           "DELETE";
 
+
         deleteButton.onclick =
           function(event) {
 
             event.stopPropagation();
 
-            window.deleteNote(note.id);
+            window.deleteNote(
+              note.id
+            );
 
           };
 
 
-        fullContent.appendChild(editButton);
-        fullContent.appendChild(deleteButton);
+        controls.appendChild(
+          editButton
+        );
+
+        controls.appendChild(
+          deleteButton
+        );
+
+        article.appendChild(
+          controls
+        );
 
       }
 
 
-      article.appendChild(header);
-      article.appendChild(fullContent);
-
-
-      header.onclick =
-        function() {
-
-          article.classList.remove("collapsed");
-
-        };
-
-
-      container.appendChild(article);
+      container.appendChild(
+        article
+      );
 
     });
 
@@ -557,9 +573,7 @@ window.addEntry = async function() {
       "Your anonymous entry has been added!"
     );
 
-    if (auth.currentUser) {
-      loadSubmissions();
-    }
+    loadSubmissions();
 
   } catch (error) {
 
@@ -691,14 +705,18 @@ async function loadSubmissions() {
             article.classList.contains("collapsed")
           ) {
 
-            article.classList.remove("collapsed");
+            article.classList.remove(
+              "collapsed"
+            );
 
             text.textContent =
               submission.text;
 
           } else {
 
-            article.classList.add("collapsed");
+            article.classList.add(
+              "collapsed"
+            );
 
             text.textContent =
               submission.text.length > 45
@@ -736,12 +754,16 @@ async function loadSubmissions() {
           };
 
 
-        article.appendChild(deleteButton);
+        article.appendChild(
+          deleteButton
+        );
 
       }
 
 
-      container.appendChild(article);
+      container.appendChild(
+        article
+      );
 
     });
 
@@ -755,6 +777,7 @@ async function loadSubmissions() {
   }
 
 }
+
 
 // ==========================
 // DELETE SUBMISSION
