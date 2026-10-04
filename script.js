@@ -28,9 +28,7 @@ const firebaseConfig = {
 
 
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-
 const db = getFirestore(app);
 
 
@@ -50,8 +48,7 @@ window.showPage = function(pageName) {
 
   pages.forEach(function(page) {
 
-    const element =
-      document.getElementById(page);
+    const element = document.getElementById(page);
 
     if (element) {
       element.classList.add("hidden");
@@ -59,17 +56,13 @@ window.showPage = function(pageName) {
 
   });
 
-
-  const selected =
-    document.getElementById(pageName);
+  const selected = document.getElementById(pageName);
 
   if (selected) {
     selected.classList.remove("hidden");
   }
 
-
   updateOwnerControls();
-
 
   if (pageName === "notes") {
     loadNotes();
@@ -78,6 +71,7 @@ window.showPage = function(pageName) {
   if (pageName === "add" && auth.currentUser) {
     loadSubmissions();
   }
+
 };
 
 
@@ -88,13 +82,9 @@ window.showPage = function(pageName) {
 window.ownerLogin = function() {
 
   if (auth.currentUser) {
-
     window.showPage("dashboard");
-
   } else {
-
     window.showPage("login");
-
   }
 
 };
@@ -106,15 +96,9 @@ window.ownerLogin = function() {
 
 window.checkPassword = async function() {
 
-  const email =
-    document.getElementById("email").value.trim();
-
-  const password =
-    document.getElementById("password").value;
-
-  const message =
-    document.getElementById("login-message");
-
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const message = document.getElementById("login-message");
 
   try {
 
@@ -124,12 +108,10 @@ window.checkPassword = async function() {
       password
     );
 
-
     message.textContent = "";
 
     document.getElementById("email").value = "";
     document.getElementById("password").value = "";
-
 
     updateOwnerControls();
 
@@ -153,11 +135,18 @@ window.checkPassword = async function() {
 
 window.logout = async function() {
 
-  await signOut(auth);
+  try {
 
-  updateOwnerControls();
+    await signOut(auth);
 
-  window.showPage("welcome");
+    updateOwnerControls();
+    window.showPage("welcome");
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
 
 };
 
@@ -171,32 +160,27 @@ function updateOwnerControls() {
   const controls =
     document.getElementById("owner-controls");
 
-
   if (!controls) {
     return;
   }
 
-
   if (auth.currentUser) {
-
     controls.classList.remove("hidden");
-
   } else {
-
     controls.classList.add("hidden");
-
   }
 
 }
 
 
 // ==========================
-// LOAD NOTES
+// LOAD OWNER NOTES
 // ==========================
 
 async function loadNotes() {
 
-  const container = document.getElementById("notes-content");
+  const container =
+    document.getElementById("notes-content");
 
   if (!container) {
     return;
@@ -206,9 +190,8 @@ async function loadNotes() {
 
   try {
 
-    const snapshot = await getDocs(
-      collection(db, "notes")
-    );
+    const snapshot =
+      await getDocs(collection(db, "notes"));
 
     const notes = [];
 
@@ -225,45 +208,56 @@ async function loadNotes() {
 
     });
 
-    // Newest notes first
     notes.sort(function(a, b) {
 
-      const dateA = a.createdAt?.toDate
-        ? a.createdAt.toDate()
-        : new Date(a.createdAt);
+      const dateA =
+        a.createdAt?.toDate
+          ? a.createdAt.toDate()
+          : new Date(a.createdAt);
 
-      const dateB = b.createdAt?.toDate
-        ? b.createdAt.toDate()
-        : new Date(b.createdAt);
+      const dateB =
+        b.createdAt?.toDate
+          ? b.createdAt.toDate()
+          : new Date(b.createdAt);
 
       return dateB - dateA;
 
     });
 
+
     notes.forEach(function(note) {
 
-      const article = document.createElement("article");
+      const article =
+        document.createElement("article");
+
       article.className = "note collapsed";
 
-      const header = document.createElement("div");
+
+      const header =
+        document.createElement("div");
+
       header.className = "note-header";
 
-      const title = document.createElement("h2");
 
-      const date = note.createdAt?.toDate
-        ? note.createdAt.toDate()
-        : new Date(note.createdAt);
+      const title =
+        document.createElement("h2");
 
-      title.textContent = date.toLocaleDateString(
-        "en-US",
-        {
+      const date =
+        note.createdAt?.toDate
+          ? note.createdAt.toDate()
+          : new Date(note.createdAt);
+
+      title.textContent =
+        date.toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
           year: "numeric"
-        }
-      );
+        });
 
-      const preview = document.createElement("p");
+
+      const preview =
+        document.createElement("p");
+
       preview.className = "note-preview";
 
       preview.textContent =
@@ -271,41 +265,52 @@ async function loadNotes() {
           ? note.text.substring(0, 45) + "..."
           : note.text;
 
+
       header.appendChild(title);
       header.appendChild(preview);
 
-      const fullContent = document.createElement("div");
+
+      const fullContent =
+        document.createElement("div");
+
       fullContent.className = "note-full";
 
-      const paragraph = document.createElement("p");
+
+      const paragraph =
+        document.createElement("p");
+
       paragraph.textContent = note.text;
 
       fullContent.appendChild(paragraph);
 
-      const minimizeButton = document.createElement("button");
-      minimizeButton.className = "enter-button minimize-button";
+
+      const minimizeButton =
+        document.createElement("button");
+
+      minimizeButton.className =
+        "enter-button minimize-button";
+
       minimizeButton.textContent = "MINIMIZE";
 
       minimizeButton.onclick = function(event) {
+
         event.stopPropagation();
+
         article.classList.add("collapsed");
+
       };
 
       fullContent.appendChild(minimizeButton);
 
-      article.appendChild(header);
-      article.appendChild(fullContent);
 
-      // Open the note when clicked
-      header.onclick = function() {
-        article.classList.remove("collapsed");
-      };
-
-      // Owner controls
       if (auth.currentUser) {
 
-        const editButton = document.createElement("button");
-        editButton.className = "enter-button";
+        const editButton =
+          document.createElement("button");
+
+        editButton.className =
+          "enter-button";
+
         editButton.textContent = "EDIT";
 
         editButton.onclick = function(event) {
@@ -319,7 +324,10 @@ async function loadNotes() {
 
         };
 
-        const deleteButton = document.createElement("button");
+
+        const deleteButton =
+          document.createElement("button");
+
         deleteButton.className =
           "enter-button delete-button";
 
@@ -333,10 +341,23 @@ async function loadNotes() {
 
         };
 
+
         fullContent.appendChild(editButton);
         fullContent.appendChild(deleteButton);
 
       }
+
+
+      article.appendChild(header);
+      article.appendChild(fullContent);
+
+
+      header.onclick = function() {
+
+        article.classList.remove("collapsed");
+
+      };
+
 
       container.appendChild(article);
 
@@ -344,14 +365,13 @@ async function loadNotes() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error("Error loading notes:", error);
 
   }
 
 }
 
 
-  
 // ==========================
 // EDIT NOTE
 // ==========================
@@ -362,31 +382,39 @@ window.editNote = async function(id, oldText) {
     return;
   }
 
-
   const newText =
     prompt(
       "Edit your diary entry:",
       oldText
     );
 
-
   if (newText === null) {
     return;
   }
 
+  try {
 
-  await setDoc(
-    doc(db, "notes", id),
-    {
-      title: "Owner's Note",
-      text: newText
-    }
-  );
+    await setDoc(
+      doc(db, "notes", id),
+      {
+        title: "Owner's Note",
+        text: newText
+      },
+      { merge: true }
+    );
 
+    loadNotes();
 
-  loadNotes();
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Something went wrong while editing.");
+
+  }
 
 };
+
 
 // ==========================
 // DELETE NOTE
@@ -398,20 +426,28 @@ window.deleteNote = async function(id) {
     return;
   }
 
-
   if (!confirm("Delete this diary entry?")) {
     return;
   }
 
+  try {
 
-  await deleteDoc(
-    doc(db, "notes", id)
-  );
+    await deleteDoc(
+      doc(db, "notes", id)
+    );
 
+    loadNotes();
 
-  loadNotes();
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Something went wrong while deleting.");
+
+  }
 
 };
+
 
 // ==========================
 // CREATE NEW NOTE
@@ -423,15 +459,12 @@ window.createNote = async function() {
     return;
   }
 
-
   const text =
     prompt("Write your new diary entry:");
-
 
   if (text === null || text.trim() === "") {
     return;
   }
-
 
   try {
 
@@ -444,9 +477,7 @@ window.createNote = async function() {
       }
     );
 
-
     loadNotes();
-
 
   } catch (error) {
 
@@ -460,6 +491,7 @@ window.createNote = async function() {
 
 };
 
+
 // ==========================
 // ADD ANONYMOUS ENTRY
 // ==========================
@@ -469,14 +501,16 @@ window.addEntry = async function() {
   const textarea =
     document.getElementById("entry");
 
+  if (!textarea) {
+    return;
+  }
+
   const text =
     textarea.value.trim();
-
 
   if (text === "") {
     return;
   }
-
 
   try {
 
@@ -488,18 +522,15 @@ window.addEntry = async function() {
       }
     );
 
-
     textarea.value = "";
 
     alert(
       "Your anonymous entry has been added!"
     );
 
-
     if (auth.currentUser) {
       loadSubmissions();
     }
-
 
   } catch (error) {
 
@@ -551,20 +582,23 @@ async function loadSubmissions() {
 
     });
 
-    // Newest submissions first
+
     submissions.sort(function(a, b) {
 
-      const dateA = a.createdAt?.toDate
-        ? a.createdAt.toDate()
-        : new Date(a.createdAt);
+      const dateA =
+        a.createdAt?.toDate
+          ? a.createdAt.toDate()
+          : new Date(a.createdAt);
 
-      const dateB = b.createdAt?.toDate
-        ? b.createdAt.toDate()
-        : new Date(b.createdAt);
+      const dateB =
+        b.createdAt?.toDate
+          ? b.createdAt.toDate()
+          : new Date(b.createdAt);
 
       return dateB - dateA;
 
     });
+
 
     submissions.forEach(function(submission) {
 
@@ -575,7 +609,6 @@ async function loadSubmissions() {
         "note collapsed";
 
 
-      // HEADER
       const header =
         document.createElement("div");
 
@@ -592,7 +625,68 @@ async function loadSubmissions() {
           : new Date(submission.createdAt);
 
       title.textContent =
-        date.toLocaleDateString(
+        date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        });
+
+
+      const preview =
+        document.createElement("p");
+
+      preview.className =
+        "note-preview";
+
+      preview.textContent =
+        submission.text.length > 45
+          ? submission.text.substring(0, 45) + "..."
+          : submission.text;
+
+
+      header.appendChild(title);
+      header.appendChild(preview);
+
+
+      const fullContent =
+        document.createElement("div");
+
+      fullContent.className =
+        "note-full";
+
+
+      const paragraph =
+        document.createElement("p");
+
+      paragraph.textContent =
+        submission.text;
+
+      fullContent.appendChild(paragraph);
+
+
+      const minimizeButton =
+        document.createElement("button");
+
+      minimizeButton.className =
+        "enter-button minimize-button";
+
+      minimizeButton.textContent =
+        "MINIMIZE";
+
+      minimizeButton.onclick = function(event) {
+
+        event.stopPropagation();
+
+        article.classList.add("collapsed");
+
+      };
+
+      fullContent.appendChild(minimizeButton);
+
+
+      if (auth.currentUser) {
+
+        const(
           "en-US",
           {
             month: "short",
