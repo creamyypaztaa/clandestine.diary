@@ -631,205 +631,130 @@ async function loadSubmissions() {
 
     submissions.forEach(function(submission) {
 
-  const article = document.createElement("article");
-  article.className = "note collapsed";
+      const article =
+        document.createElement("article");
 
-  const header = document.createElement("div");
-  header.className = "note-header";
-
-  const title = document.createElement("h2");
-
-  const date = submission.createdAt?.toDate
-    ? submission.createdAt.toDate()
-    : new Date(submission.createdAt);
-
-  title.textContent = date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  const text = document.createElement("p");
-  text.className = "note-preview";
-
-  text.textContent =
-    submission.text.length > 45
-      ? submission.text.substring(0, 45) + "..."
-      : submission.text;
-
-  header.appendChild(title);
-  header.appendChild(text);
-
-  article.appendChild(header);
+      article.className =
+        "note collapsed";
 
 
-  header.onclick = function() {
+      const header =
+        document.createElement("div");
 
-    if (article.classList.contains("collapsed")) {
+      header.className =
+        "note-header";
 
-      article.classList.remove("collapsed");
 
-      text.textContent = submission.text;
+      const title =
+        document.createElement("h2");
 
-    } else {
 
-      article.classList.add("collapsed");
+      const date =
+        submission.createdAt?.toDate
+          ? submission.createdAt.toDate()
+          : new Date(submission.createdAt);
+
+
+      title.textContent =
+        date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        });
+
+
+      const text =
+        document.createElement("p");
+
+      text.className =
+        "note-preview";
+
 
       text.textContent =
         submission.text.length > 45
           ? submission.text.substring(0, 45) + "..."
           : submission.text;
 
-    }
-
-  };
-
-
-  // OWNER DELETE BUTTON
-
-  if (auth.currentUser) {
-
-    const deleteButton = document.createElement("button");
-
-    deleteButton.className =
-      "enter-button delete-button";
-
-    deleteButton.textContent = "DELETE";
-
-    deleteButton.onclick = function(event) {
-
-      event.stopPropagation();
-
-      window.deleteSubmission(
-        submission.id
-      );
-
-    };
-
-    article.appendChild(deleteButton);
-
-  }
-
-
-  container.appendChild(article);
-
-});
-
-
-      const preview =
-        document.createElement("p");
-
-      preview.className =
-        "note-preview";
-
-      preview.textContent =
-        submission.text.length > 45
-          ? submission.text.substring(0, 45) + "..."
-          : submission.text;
-
 
       header.appendChild(title);
-      header.appendChild(preview);
+      header.appendChild(text);
+
+      article.appendChild(header);
 
 
-      const fullContent =
-        document.createElement("div");
+      // EXPAND / COLLAPSE
 
-      fullContent.className =
-        "note-full";
+      header.onclick =
+        function() {
 
+          if (
+            article.classList.contains("collapsed")
+          ) {
 
-      const paragraph =
-        document.createElement("p");
+            article.classList.remove("collapsed");
 
-      paragraph.textContent =
-        submission.text;
+            text.textContent =
+              submission.text;
 
-      fullContent.appendChild(paragraph);
+          } else {
 
+            article.classList.add("collapsed");
 
-      const minimizeButton =
-        document.createElement("button");
+            text.textContent =
+              submission.text.length > 45
+                ? submission.text.substring(0, 45) + "..."
+                : submission.text;
 
-      minimizeButton.className =
-        "enter-button minimize-button";
-
-      minimizeButton.textContent =
-        "MINIMIZE";
-
-      minimizeButton.onclick =
-        function(event) {
-
-          event.stopPropagation();
-
-          article.classList.add("collapsed");
+          }
 
         };
 
-      fullContent.appendChild(
-        minimizeButton
-      );
 
+      // OWNER DELETE BUTTON
 
       if (auth.currentUser) {
 
         const deleteButton =
-    document.createElement("button");
+          document.createElement("button");
 
-  deleteButton.className =
-    "enter-button delete-button";
+        deleteButton.className =
+          "enter-button delete-button";
 
-  deleteButton.textContent =
-    "DELETE";
-
-  deleteButton.onclick =
-    function(event) {
-
-      event.stopPropagation();
-
-      window.deleteSubmission(
-        submission.id
-      );
-
-    };
-
-  fullContent.appendChild(
-    deleteButton
-  );
-
-}
+        deleteButton.textContent =
+          "DELETE";
 
 
-article.appendChild(header);
-article.appendChild(fullContent);
+        deleteButton.onclick =
+          function(event) {
+
+            event.stopPropagation();
+
+            window.deleteSubmission(
+              submission.id
+            );
+
+          };
 
 
-// OPEN
-header.onclick =
-  function() {
+        article.appendChild(deleteButton);
 
-    article.classList.remove(
-      "collapsed"
+      }
+
+
+      container.appendChild(article);
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Error loading submissions:",
+      error
     );
 
-  };
-
-
-container.appendChild(article);
-
-});
-
-} catch (error) {
-
-  console.error(
-    "Error loading submissions:",
-    error
-  );
+  }
 
 }
-
-}
-
 
 // ==========================
 // DELETE SUBMISSION
