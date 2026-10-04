@@ -165,12 +165,18 @@ body {
 
 .note-preview {
   margin: 0;
-
   font-size: 16px;
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.note,
+.note-header,
+.note-preview {
+  min-width: 0;
+  max-width: 100%;
 }
 
 
