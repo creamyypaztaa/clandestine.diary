@@ -2,8 +2,16 @@
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
   background-color: #E6CCFF;
   color: #16001F;
   font-family: "Comic Sans MS", cursive;
@@ -11,13 +19,16 @@ body {
 
 .page {
   display: flex;
+  width: 100%;
   min-height: 100vh;
 }
+
 
 /* LEFT SIDEBAR */
 
 .sidebar {
   width: 230px;
+  min-width: 230px;
   min-height: 100vh;
 
   border-right: 3px solid #16001F;
@@ -58,6 +69,7 @@ body {
 
 .content {
   flex: 1;
+  min-width: 0;
 
   padding: 60px;
 
@@ -113,20 +125,59 @@ body {
 }
 
 
-/* DIARY NOTE */
+/* DIARY NOTES */
+
+#notes-content {
+  width: min(900px, 100%);
+  margin: 30px auto;
+}
+
+#entries {
+  width: min(700px, 100%);
+  margin: 30px auto;
+}
 
 .note {
-  width: min(700px, 90%);
+  width: 100%;
 
-  margin: 30px auto;
-
-  padding: 25px;
+  margin: 15px 0;
+  padding: 0;
 
   border: 2px solid #16001F;
 
-  text-align: left;
-
   background-color: #f3e5ff;
+
+  overflow: hidden;
+
+  transition: all 0.3s ease;
+}
+
+.note-header {
+  padding: 18px 22px;
+
+  cursor: pointer;
+}
+
+.note-header h2 {
+  margin: 0 0 5px;
+  font-size: 21px;
+}
+
+.note-preview {
+  margin: 0;
+
+  font-size: 16px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* NOTE CONTROLS */
+
+.note-controls {
+  padding: 0 12px 12px;
 }
 
 
@@ -135,7 +186,7 @@ body {
 textarea {
   display: block;
 
-  width: min(700px, 90%);
+  width: min(700px, 100%);
   height: 180px;
 
   margin: 30px auto 10px;
@@ -156,8 +207,9 @@ textarea {
 
 /* LOGIN */
 
-input[type="password"] {
-  width: min(350px, 80%);
+input[type="password"],
+input[type="email"] {
+  width: min(350px, 100%);
 
   padding: 13px;
 
@@ -171,63 +223,56 @@ input[type="password"] {
 }
 
 
-/* SUBMISSIONS */
+/* MOBILE */
 
-#entries {
-  width: min(700px, 90%);
+@media (max-width: 700px) {
 
-  margin: 30px auto;
-}
+  .page {
+    display: block;
+  }
 
-#notes-content {
-  width: min(900px, 95%);
-  margin: 30px auto;
-}
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    min-height: auto;
 
-.note {
-  width: 100%;
-  margin: 15px 0;
-  padding: 0;
-  border: 2px solid #16001F;
-  background-color: #f3e5ff;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
+    border-right: none;
+    border-bottom: 3px solid #16001F;
+  }
 
-.note-header {
-  padding: 18px 22px;
-  cursor: pointer;
-}
+  .side-button {
+    padding: 16px 12px;
+    font-size: 17px;
+  }
 
-.note-header h2 {
-  margin: 0 0 5px;
-  font-size: 21px;
-}
+  .owner-button {
+    margin-top: 0;
+    border-top: 3px solid #16001F;
+  }
 
-.note-preview {
-  margin: 0;
-  font-size: 16px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .content {
+    width: 100%;
+    padding: 30px 18px;
+  }
 
-.note-full {
-  padding: 0 22px 22px;
-}
+  .content h1 {
+    font-size: 34px;
+  }
 
-.note-full p {
-  white-space: pre-wrap;
-}
+  .content h2 {
+    font-size: 22px;
+  }
 
-.note.collapsed .note-full {
-  display: none;
-}
+  .content p {
+    font-size: 17px;
+  }
 
-.note.collapsed {
-  cursor: pointer;
-}
+  #notes-content,
+  #entries {
+    width: 100%;
+  }
 
-.minimize-button {
-  margin-left: 0;
+  .note {
+    width: 100%;
+  }
 }
