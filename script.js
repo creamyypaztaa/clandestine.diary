@@ -196,13 +196,159 @@ function updateOwnerControls() {
 
 async function loadNotes() {
 
-  const container =
-    document.getElementById("notes-content");
-
+  const container = document.getElementById("notes-content");
 
   if (!container) {
     return;
   }
+
+  container.innerHTML = "";
+
+  try {
+
+    const snapshot = await getDocs(
+      collection(db, "notes")
+    );
+
+    const notes = [];
+
+    snapshot.forEach(function(noteDocument) {
+
+      const note = noteDocument.data();
+
+      notes.push({
+        id: noteDocument.id,
+        title: note.title || "Owner's Note",
+        text: note.text || "",
+        createdAt: note.createdAt
+      });
+
+    });
+
+    // Newest notes first
+    notes.sort(function(a, b) {
+
+      const dateA = a.createdAt?.toDate
+        ? a.createdAt.toDate()
+        : new Date(a.createdAt);
+
+      const dateB = b.createdAt?.toDate
+        ? b.createdAt.toDate()
+        : new Date(b.createdAt);
+
+      return dateB - dateA;
+
+    });
+
+    notes.forEach(function(note) {
+
+      const article = document.createElement("article");
+      article.className = "note collapsed";
+
+      const header = document.createElement("div");
+      header.className = "note-header";
+
+      const title = document.createElement("h2");
+
+      const date = note.createdAt?.toDate
+        ? note.createdAt.toDate()
+        : new Date(note.createdAt);
+
+      title.textContent = date.toLocaleDateString(
+        "en-US",
+        {
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        }
+      );
+
+      const preview = document.createElement("p");
+      preview.className = "note-preview";
+
+      preview.textContent =
+        note.text.length > 45
+          ? note.text.substring(0, 45) + "..."
+          : note.text;
+
+      header.appendChild(title);
+      header.appendChild(preview);
+
+      const fullContent = document.createElement("div");
+      fullContent.className = "note-full";
+
+      const paragraph = document.createElement("p");
+      paragraph.textContent = note.text;
+
+      fullContent.appendChild(paragraph);
+
+      const minimizeButton = document.createElement("button");
+      minimizeButton.className = "enter-button minimize-button";
+      minimizeButton.textContent = "MINIMIZE";
+
+      minimizeButton.onclick = function(event) {
+        event.stopPropagation();
+        article.classList.add("collapsed");
+      };
+
+      fullContent.appendChild(minimizeButton);
+
+      article.appendChild(header);
+      article.appendChild(fullContent);
+
+      // Open the note when clicked
+      header.onclick = function() {
+        article.classList.remove("collapsed");
+      };
+
+      // Owner controls
+      if (auth.currentUser) {
+
+        const editButton = document.createElement("button");
+        editButton.className = "enter-button";
+        editButton.textContent = "EDIT";
+
+        editButton.onclick = function(event) {
+
+          event.stopPropagation();
+
+          window.editNote(
+            note.id,
+            note.text
+          );
+
+        };
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className =
+          "enter-button delete-button";
+
+        deleteButton.textContent = "DELETE";
+
+        deleteButton.onclick = function(event) {
+
+          event.stopPropagation();
+
+          window.deleteNote(note.id);
+
+        };
+
+        fullContent.appendChild(editButton);
+        fullContent.appendChild(deleteButton);
+
+      }
+
+      container.appendChild(article);
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+}
 
 
   container.innerHTML = "";
