@@ -29,6 +29,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+console.log("Firebase project:", app.options.projectId);
+console.log("Firebase API key:", app.options.apiKey);
+console.log("Firebase auth domain:", app.options.authDomain);
+
 const db = getFirestore(app);
 
 
