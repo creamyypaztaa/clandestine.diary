@@ -178,3 +178,56 @@ input[type="password"] {
 
   margin: 30px auto;
 }
+
+#notes-content {
+  width: min(900px, 95%);
+  margin: 30px auto;
+}
+
+.note {
+  width: 100%;
+  margin: 15px 0;
+  padding: 0;
+  border: 2px solid #16001F;
+  background-color: #f3e5ff;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.note-header {
+  padding: 18px 22px;
+  cursor: pointer;
+}
+
+.note-header h2 {
+  margin: 0 0 5px;
+  font-size: 21px;
+}
+
+.note-preview {
+  margin: 0;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-full {
+  padding: 0 22px 22px;
+}
+
+.note-full p {
+  white-space: pre-wrap;
+}
+
+.note.collapsed .note-full {
+  display: none;
+}
+
+.note.collapsed {
+  cursor: pointer;
+}
+
+.minimize-button {
+  margin-left: 0;
+}
