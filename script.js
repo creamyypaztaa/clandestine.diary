@@ -68,8 +68,8 @@ window.showPage = function(pageName) {
     loadNotes();
   }
 
-  if (pageName === "add" && auth.currentUser) {
-    loadSubmissions();
+  if (pageName === "add") {
+  loadSubmissions();
   }
 
 };
