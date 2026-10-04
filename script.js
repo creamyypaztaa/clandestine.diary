@@ -519,57 +519,242 @@ window.addEntry = async function() {
 // ==========================
 
 async function loadSubmissions() {
-
-  if (!auth.currentUser) {
-    return;
-  }
-
+async function loadSubmissions() {
 
   const container =
     document.getElementById("entries");
-
 
   if (!container) {
     return;
   }
 
-
   container.innerHTML = "";
 
+  try {
 
-  const snapshot =
-    await getDocs(
-      collection(db, "submissions")
-    );
+    const snapshot =
+      await getDocs(
+        collection(db, "submissions")
+      );
+
+    const submissions = [];
+
+    snapshot.forEach(function(submissionDocument) {
+
+      const submission =
+        submissionDocument.data();
+
+      submissions.push({
+        id: submissionDocument.id,
+        text: submission.text || "",
+        createdAt: submission.createdAt
+      });
+
+    });
+
+    // Newest submissions first
+    submissions.sort(function(a, b) {
+
+      const dateA = a.createdAt?.toDate
+        ? a.createdAt.toDate()
+        : new Date(a.createdAt);
+
+      const dateB = b.createdAt?.toDate
+        ? b.createdAt.toDate()
+        : new Date(b.createdAt);
+
+      return dateB - dateA;
+
+    });
+
+    submissions.forEach(function(submission) {
+
+      const article =
+        document.createElement("article");
+
+      article.className =
+        "note collapsed";
 
 
-  snapshot.forEach(function(submissionDocument) {
+      // HEADER
+      const header =
+        document.createElement("div");
 
-    const submission =
-      submissionDocument.data();
-
-
-    const entry =
-      document.createElement("div");
-
-    entry.className = "note";
+      header.className =
+        "note-header";
 
 
-    const paragraph =
-      document.createElement("p");
+      const title =
+        document.createElement("h2");
 
-    paragraph.textContent =
-      submission.text;
+      const date =
+        submission.createdAt?.toDate
+          ? submission.createdAt.toDate()
+          : new Date(submission.createdAt);
+
+      title.textContent =
+        date.toLocaleDateString(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+          }
+        );
 
 
-    entry.appendChild(paragraph);
+      const preview =
+        document.createElement("p");
 
-    container.appendChild(entry);
+      preview.className =
+        "note-preview";
 
-  });
+      preview.textContent =
+        submission.text.length > 45
+          ? submission.text.substring(0, 45) + "..."
+          : submission.text;
+
+
+      header.appendChild(title);
+      header.appendChild(preview);
+
+
+      // FULL CONTENT
+      const fullContent =
+        document.createElement("div");
+
+      fullContent.className =
+        "note-full";
+
+
+      const paragraph =
+        document.createElement("p");
+
+      paragraph.textContent =
+        submission.text;
+
+
+      fullContent.appendChild(paragraph);
+
+
+      // MINIMIZE
+      const minimizeButton =
+        document.createElement("button");
+
+      minimizeButton.className =
+        "enter-button minimize-button";
+
+      minimizeButton.textContent =
+        "MINIMIZE";
+
+
+      minimizeButton.onclick =
+        function(event) {
+
+          event.stopPropagation();
+
+          article.classList.add("collapsed");
+
+        };
+
+
+      fullContent.appendChild(
+        minimizeButton
+      );
+
+
+      // OWNER DELETE BUTTON
+      if (auth.currentUser) {
+
+        const deleteButton =
+          document.createElement("button");
+
+        deleteButton.className =
+          "enter-button delete-button";
+
+        deleteButton.textContent =
+          "DELETE";
+
+
+        deleteButton.onclick =
+          function(event) {
+
+            event.stopPropagation();
+
+            window.deleteSubmission(
+              submission.id
+            );
+
+          };
+
+
+        fullContent.appendChild(
+          deleteButton
+        );
+
+      }
+
+
+      article.appendChild(header);
+      article.appendChild(fullContent);
+
+
+      // OPEN
+      header.onclick =
+        function() {
+
+          article.classList.remove(
+            "collapsed"
+          );
+
+        };
+
+
+      container.appendChild(article);
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
 
 }
 
+  //========================
+  // DELETE NOTES
+  //========================
+ 
+  window.deleteSubmission = async function(id) {
+
+  if (!auth.currentUser) {
+    return;
+  }
+
+  if (!confirm("Delete this submission?")) {
+    return;
+  }
+
+  try {
+
+    await deleteDoc(
+      doc(db, "submissions", id)
+    );
+
+    loadSubmissions();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Something went wrong while deleting."
+    );
+
+  }
+
+};
 
 // ==========================
 // INITIAL PAGE
