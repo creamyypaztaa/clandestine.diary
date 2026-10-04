@@ -519,7 +519,6 @@ window.addEntry = async function() {
 // ==========================
 
 async function loadSubmissions() {
-async function loadSubmissions() {
 
   const container =
     document.getElementById("entries");
