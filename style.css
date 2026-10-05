@@ -282,3 +282,23 @@ input[type="email"] {
     width: 100%;
   }
 }
+
+/*IMAGES NAKO*/
+
+.sleepy {
+    width: 200px;
+    margin-left: 50px;
+    margin-top: 800px;
+}
+
+.nerdy {
+    width: 200px;
+    margin-left: 250px;
+    margin-top: 100px;
+}
+
+.forHAM {
+    width: 200px;
+    margin-right: 100px;
+    margin-top: 90px;
+}
