@@ -289,13 +289,15 @@ input[type="email"] {
 
     position: absolute;
     width: 200px;
-    left: 50px;
-    top: 200px;
+    left: 45px;
+    top: 600px;
 }
 
 .nerdy {
-    width: 90px;
-    margin: 20px;
+    position: absolute;
+    width: 40px;
+    left: 200px;
+    top: 190px;
 }
 
 .forHAM {
