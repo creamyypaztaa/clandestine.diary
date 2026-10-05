@@ -103,28 +103,30 @@ window.checkPassword = async function() {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  const response = await fetch(
-    "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + app.options.apiKey,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        returnSecureToken: true
-      })
-    }
-  );
+  const message = document.getElementById("login-message");
 
-  const result = await response.json();
+  try {
 
-  console.log("HTTP STATUS:", response.status);
-  console.log("FIREBASE RESPONSE:", result);
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-  document.getElementById("login-message").textContent =
-    JSON.stringify(result);
+    console.log("Login successful:", auth.currentUser.email);
+
+    message.textContent = "";
+
+    window.showPage("dashboard");
+
+  } catch (error) {
+
+    console.error("Login error:", error);
+
+    message.textContent =
+      "Login failed: " + error.message;
+
+  }
 };
 
 // ==========================
