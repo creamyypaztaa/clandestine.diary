@@ -100,40 +100,33 @@ window.ownerLogin = function() {
 // ==========================
 
 window.checkPassword = async function() {
-
-  const email =
-    document.getElementById("email").value.trim();
-
-  const password =
-    document.getElementById("password").value;
-
-  const message =
-    document.getElementById("login-message");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const message = document.getElementById("login-message");
 
   try {
+    console.log("PROJECT:", app.options.projectId);
+    console.log("API KEY:", app.options.apiKey);
+    console.log("AUTH DOMAIN:", app.options.authDomain);
 
-    await signInWithEmailAndPassword(
+    const result = await signInWithEmailAndPassword(
       auth,
       email,
       password
     );
 
-    message.textContent = "";
+    console.log("LOGIN SUCCESS:", result.user);
 
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
-
-    updateOwnerControls();
-
-    window.showPage("dashboard");
+    message.textContent = "LOGIN SUCCESS";
 
   } catch (error) {
-  console.error(error);
+    console.error("FIREBASE AUTH ERROR:", error);
+    console.error("ERROR CODE:", error.code);
+    console.error("ERROR MESSAGE:", error.message);
 
-  message.textContent =
-    error.code + ": " + error.message;
-}
-
+    message.textContent =
+      error.code + " | " + error.message;
+  }
 };
 
 
