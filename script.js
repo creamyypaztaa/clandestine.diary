@@ -18,7 +18,7 @@ import {
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCbTAU50HyhJp7gObz2KEaqtV4pRTpqhDM",
+  apiKey: "AIzaSyCbTAU50HyhJp7gObZ2KEaqtV4pRTpqhDM",
   authDomain: "clandestinediary.firebaseapp.com",
   projectId: "clandestinediary",
   storageBucket: "clandestinediary.firebasestorage.app",
