@@ -29,10 +29,12 @@ body {
 .sidebar {
   width: 230px;
   min-width: 230px;
-  min-height: 100vh;
+  height: 1110px;
 
   border-right: 3px solid #16001F;
 
+  position: sticky;
+  top: 1px;
   display: flex;
   flex-direction: column;
 }
