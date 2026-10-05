@@ -102,33 +102,30 @@ window.ownerLogin = function() {
 window.checkPassword = async function() {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  const message = document.getElementById("login-message");
 
-  try {
-    console.log("PROJECT:", app.options.projectId);
-    console.log("API KEY:", app.options.apiKey);
-    console.log("AUTH DOMAIN:", app.options.authDomain);
+  const response = await fetch(
+    "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + app.options.apiKey,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        returnSecureToken: true
+      })
+    }
+  );
 
-    const result = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+  const result = await response.json();
 
-    console.log("LOGIN SUCCESS:", result.user);
+  console.log("HTTP STATUS:", response.status);
+  console.log("FIREBASE RESPONSE:", result);
 
-    message.textContent = "LOGIN SUCCESS";
-
-  } catch (error) {
-    console.error("FIREBASE AUTH ERROR:", error);
-    console.error("ERROR CODE:", error.code);
-    console.error("ERROR MESSAGE:", error.message);
-
-    message.textContent =
-      error.code + " | " + error.message;
-  }
+  document.getElementById("login-message").textContent =
+    JSON.stringify(result);
 };
-
 
 // ==========================
 // LOGOUT
