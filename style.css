@@ -306,3 +306,9 @@ input[type="email"] {
     right: 40px;
     top: 300px;
 }
+
+.sleepy,
+.nerdy,
+.forHAM {
+  pointer-events: none;
+}
