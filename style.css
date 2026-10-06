@@ -303,6 +303,8 @@ input[type="email"] {
 }
 
 .forHAM {
+    position: absolute;
     width: 200px;
-    margin: 20px;
+    right: 60px;
+    top: 200px;
 }
