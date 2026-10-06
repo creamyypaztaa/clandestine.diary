@@ -305,6 +305,6 @@ input[type="email"] {
 .forHAM {
     position: absolute;
     width: 200px;
-    right: 60px;
-    top: 200px;
+    right: 40px;
+    top: 300px;
 }
